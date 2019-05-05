@@ -1,6 +1,7 @@
-package pl.akademiakodu.model;
+package pl.akademiakodu.compiling.impl;
 
 import org.springframework.stereotype.Component;
+import pl.akademiakodu.compiling.CompilerExecutor;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -14,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Component
-public class CompilerSimpleExecutor implements CompilerExecutor {
+public class SimpleCompilerExecutor implements CompilerExecutor {
 
     public Path compileSource(Path javaFile) {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -45,11 +46,4 @@ public class CompilerSimpleExecutor implements CompilerExecutor {
         }
         return null;
     }
-
-    public static void main(String... args) throws Exception {
-        System.setOut(null);
-        new CompilerSimpleExecutor().compileSource(Paths.get("D:\\Development\\compilerapi-results\\Hello.java"));
-        new CompilerSimpleExecutor().runClass(Paths.get("D:\\Development\\compilerapi-results\\Hello.class"));
-    }
-
 }

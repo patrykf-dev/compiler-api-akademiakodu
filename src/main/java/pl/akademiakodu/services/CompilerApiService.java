@@ -1,8 +1,8 @@
-package pl.akademiakodu.service;
+package pl.akademiakodu.services;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import pl.akademiakodu.model.CodeValidator;
+import pl.akademiakodu.compiling.CodeValidator;
 
 @Service
 public class CompilerApiService {

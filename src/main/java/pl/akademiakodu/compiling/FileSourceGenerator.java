@@ -1,4 +1,4 @@
-package pl.akademiakodu.model;
+package pl.akademiakodu.compiling;
 
 import java.io.IOException;
 import java.nio.file.Path;

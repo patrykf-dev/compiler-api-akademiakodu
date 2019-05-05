@@ -1,4 +1,7 @@
-package pl.akademiakodu.model;
+package pl.akademiakodu.compiling;
+
+import pl.akademiakodu.compiling.impl.SimpleCompilerExecutor;
+import pl.akademiakodu.compiling.impl.SimpleFileSourceGenerator;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,18 +10,13 @@ import java.util.stream.Stream;
 
 public class CodeValidator {
 
-    private CompilerExecutor compilerExecutor
-            = new CompilerSimpleExecutor();
+    private CompilerExecutor compilerExecutor = new SimpleCompilerExecutor();
 
     private FileSourceGenerator fileSourceGenerator = new
-            SimpleFileGenerator("D:\\Development\\compilerapi-results");
+            SimpleFileSourceGenerator("D:\\Development\\compilerapi-results");
 
     private String code;
-
     private String expectedResult;
-
-    public CodeValidator() {
-    }
 
     public CodeValidator(String code, String expectedResult) {
         this.code = code;
@@ -47,29 +45,5 @@ public class CodeValidator {
         } catch (Exception e) {
             return e.getMessage();
         }
-    }
-
-    public CompilerExecutor getCompilerExecutor() {
-        return compilerExecutor;
-    }
-
-    public void setCompilerExecutor(CompilerExecutor compilerExecutor) {
-        this.compilerExecutor = compilerExecutor;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getExpectedResult() {
-        return expectedResult;
-    }
-
-    public void setExpectedResult(String expectedResult) {
-        this.expectedResult = expectedResult;
     }
 }
