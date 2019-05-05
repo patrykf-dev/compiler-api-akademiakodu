@@ -2,6 +2,7 @@ package pl.akademiakodu.compiling.impl;
 
 import org.springframework.stereotype.Component;
 import pl.akademiakodu.compiling.CompilerExecutor;
+import pl.akademiakodu.controllers.CompilerApiController;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -32,7 +33,7 @@ public class SimpleCompilerExecutor implements CompilerExecutor {
         clazz.newInstance();
         Method meth = clazz.getMethod("main", String[].class);
         try {
-            String fileName = "D:\\Development\\compilerapi-results\\result.txt";
+            String fileName = CompilerApiController.UPLOADED_FILES_STORAGE + "output\\result.txt";
             PrintStream fileStream = new PrintStream(fileName);
             System.setOut(fileStream);
             String[] params = null; // init params accordingly

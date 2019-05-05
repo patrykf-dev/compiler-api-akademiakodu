@@ -2,6 +2,7 @@ package pl.akademiakodu.compiling;
 
 import pl.akademiakodu.compiling.impl.SimpleCompilerExecutor;
 import pl.akademiakodu.compiling.impl.SimpleFileSourceGenerator;
+import pl.akademiakodu.controllers.CompilerApiController;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +14,7 @@ public class CodeValidator {
     private CompilerExecutor compilerExecutor = new SimpleCompilerExecutor();
 
     private FileSourceGenerator fileSourceGenerator = new
-            SimpleFileSourceGenerator("D:\\Development\\compilerapi-results");
+            SimpleFileSourceGenerator(CompilerApiController.UPLOADED_FILES_STORAGE + "output\\");
 
     private String code;
     private String expectedResult;

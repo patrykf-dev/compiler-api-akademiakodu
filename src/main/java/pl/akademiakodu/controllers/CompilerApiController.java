@@ -8,6 +8,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.akademiakodu.services.CompilerApiService;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,35 +22,31 @@ public class CompilerApiController {
     private CompilerApiService compilerApiService;
 
     @CrossOrigin
-    @GetMapping("/api/v1/code/upload")
-    public String checkCode(@RequestParam String code,
-                            @RequestParam String expectedResult) {
-        String result = null;
-        synchronized (this) {
-            compilerApiService = new CompilerApiService(code,
-                    expectedResult);
-             result = compilerApiService.getResult();
-        }
-        return result;
-    }
-
-    @PostMapping("/api/v1/code/upload/raw")
-    public ResponseEntity<String> singleFileUpload(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/api/v1/code/upload")
+    public ResponseEntity<String> singleFileUpload(@RequestParam("file") MultipartFile file) throws UnsupportedEncodingException {
 
         if (file.isEmpty()) {
             return new ResponseEntity<>("The file is empty!", HttpStatus.NO_CONTENT);
         }
 
+        byte[] bytes;
         try {
-            byte[] bytes = file.getBytes();
+            bytes = file.getBytes();
             Path path = Paths.get(UPLOADED_FILES_STORAGE + file.getOriginalFilename());
             Files.write(path, bytes);
         } catch (IOException e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Could not save file", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>("Successfully uploaded file", HttpStatus.OK);
+        String result = "BLANK_RESULT";
+        synchronized (this) {
+            String sourceCode = new String(bytes, StandardCharsets.UTF_8);
+            compilerApiService = new CompilerApiService(sourceCode, "asd");
+            result = compilerApiService.getResult();
+        }
+
+        return new ResponseEntity<>("Successfully uploaded file " + result, HttpStatus.OK);
     }
 
 }
