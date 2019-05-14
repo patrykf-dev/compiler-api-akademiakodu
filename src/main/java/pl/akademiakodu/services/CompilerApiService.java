@@ -4,20 +4,19 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pl.akademiakodu.compiling.CodeValidator;
 
+import java.nio.charset.StandardCharsets;
+
 @Service
 public class CompilerApiService {
 
-    private CodeValidator codeValidator ;
-
-    public CompilerApiService(){}
-
-    public CompilerApiService(String code, String expectedResult){
-        codeValidator = new CodeValidator(code,expectedResult);
+    public CompilerApiService() {
     }
 
-    @Async("taskExecutor")
-    public String getResult(){
-       return codeValidator.getResult();
+    @Async
+    public String validateFile(byte[] bytes) {
+        String sourceCode = new String(bytes, StandardCharsets.UTF_8);
+        CodeValidator codeValidator = new CodeValidator(sourceCode, "Hello world");
+        return codeValidator.getResult();
     }
 
 }
