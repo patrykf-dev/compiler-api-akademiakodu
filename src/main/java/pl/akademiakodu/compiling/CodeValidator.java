@@ -1,40 +1,31 @@
 package pl.akademiakodu.compiling;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import pl.akademiakodu.compiling.impl.SimpleCompilerExecutor;
-import pl.akademiakodu.compiling.impl.SimpleFileSourceGenerator;
-import pl.akademiakodu.controllers.CompilerApiController;
+import pl.akademiakodu.services.FileStorageService;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+@Component
 public class CodeValidator {
 
-    private CompilerExecutor compilerExecutor = new SimpleCompilerExecutor();
+    @Autowired
+    private FileStorageService fileStorageService;
+    @Autowired
+    private CompilerExecutor compilerExecutor;
 
-    private FileSourceGenerator fileSourceGenerator = new
-            SimpleFileSourceGenerator(CompilerApiController.UPLOADED_FILES_STORAGE + "output\\");
 
-    private String code;
-    private String expectedResult;
 
-    public CodeValidator(String code, String expectedResult) {
-        this.code = code;
-        this.expectedResult = expectedResult;
-    }
-
-    public String getResult() {
+    public String getResult(Path path, String expectedResult) {
         try {
-            Path path = fileSourceGenerator.generateJavaFileFromSourceCode(code);
-            Path filePath = compilerExecutor.compileSource(path);
-            Path result = compilerExecutor.runClass(filePath);
-            StringBuilder stringResult = new StringBuilder("");
-            try (Stream<String> stream = Files.lines(result)) {
-                stream.forEach(s -> stringResult.append(s.toString()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Path compiledFilePath = compilerExecutor.compileSource(path);
+            Path output = compilerExecutor.runClass(compiledFilePath);
+            StringBuilder stringResult = new StringBuilder();
+            Stream<String> stream = Files.lines(output);
+            stream.forEach(s -> stringResult.append(s));
 
             if (stringResult.toString().equals(expectedResult)) {
                 return "Poprawna odpowiedź";
@@ -44,6 +35,7 @@ public class CodeValidator {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             return e.getMessage();
         }
     }

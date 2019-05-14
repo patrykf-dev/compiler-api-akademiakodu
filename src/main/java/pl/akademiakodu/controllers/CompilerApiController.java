@@ -6,12 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.akademiakodu.services.CompilerApiService;
+import pl.akademiakodu.services.FileStorageService;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @CrossOrigin
 @RestController
@@ -20,7 +19,9 @@ public class CompilerApiController {
     @Autowired
     private CompilerApiService compilerApiService;
 
-    public static final String UPLOADED_FILES_STORAGE = "D:\\Development\\compiler-api-akademiakodu-results\\";
+    @Autowired
+    private FileStorageService fileStorageService;
+
 
     @CrossOrigin
     @PostMapping("/code/upload")
@@ -29,21 +30,18 @@ public class CompilerApiController {
             return new ResponseEntity<>("The file is empty!", HttpStatus.NO_CONTENT);
         }
 
-        byte[] bytes;
+        Path path;
         try {
-            bytes = file.getBytes();
-            Path path = Paths.get(UPLOADED_FILES_STORAGE + file.getOriginalFilename());
-            Files.write(path, bytes);
+            path = fileStorageService.saveUploadedFile(file.getBytes(), file.getOriginalFilename());
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
-        // @Async method
-        compilerApiService.validateFile(bytes);
 
-        
+        // @Async method
+        compilerApiService.validateFile(path);
         return new ResponseEntity<>("Successfully uploaded file!", HttpStatus.OK);
     }
 

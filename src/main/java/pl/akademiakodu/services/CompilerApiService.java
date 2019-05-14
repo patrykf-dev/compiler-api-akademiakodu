@@ -1,22 +1,24 @@
 package pl.akademiakodu.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pl.akademiakodu.compiling.CodeValidator;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 @Service
 public class CompilerApiService {
 
-    public CompilerApiService() {
-    }
+    @Autowired
+    private CodeValidator codeValidator;
+
+    public CompilerApiService() { }
 
     @Async
-    public String validateFile(byte[] bytes) {
-        String sourceCode = new String(bytes, StandardCharsets.UTF_8);
-        CodeValidator codeValidator = new CodeValidator(sourceCode, "Hello world");
-        return codeValidator.getResult();
+    public String validateFile(Path path) {
+        return codeValidator.getResult(path, "Hello world");
     }
 
 }

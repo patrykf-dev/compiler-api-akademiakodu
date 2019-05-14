@@ -1,15 +1,14 @@
 package pl.akademiakodu.compiling.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.akademiakodu.compiling.CompilerExecutor;
-import pl.akademiakodu.controllers.CompilerApiController;
+import pl.akademiakodu.services.FileStorageService;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -17,6 +16,9 @@ import java.nio.file.Paths;
 
 @Component
 public class SimpleCompilerExecutor implements CompilerExecutor {
+    @Autowired
+    private FileStorageService fileStorageService;
+
 
     public Path compileSource(Path javaFile) {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -25,23 +27,21 @@ public class SimpleCompilerExecutor implements CompilerExecutor {
         return Paths.get(path);
     }
 
-    public Path runClass(Path javaClass)
-            throws MalformedURLException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public Path runClass(Path javaClass) throws Exception {
         URL classUrl = javaClass.getParent().toFile().toURI().toURL();
         URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{classUrl});
         Class<?> clazz = Class.forName("Hello", true, classLoader);
-        clazz.newInstance();
-        Method meth = clazz.getMethod("main", String[].class);
+        clazz.getConstructor().newInstance();
+        Method method = clazz.getMethod("main", String[].class);
         try {
-            String fileName = CompilerApiController.UPLOADED_FILES_STORAGE + "output\\result.txt";
-            PrintStream fileStream = new PrintStream(fileName);
+            String outputPath = fileStorageService.getOutputPathForFile();
+            PrintStream fileStream = new PrintStream(outputPath);
             System.setOut(fileStream);
-            String[] params = null; // init params accordingly
-            meth.invoke(null, (Object) params);
-            return Paths.get(fileName);
+            String[] params = null;
+            method.invoke(null, (Object) params);
+            return Paths.get(outputPath);
         } catch (Exception e) {
-            System.out.println("BŁĄD" + e.getMessage());
-
+            e.printStackTrace();
         } finally {
             System.setOut(null);
         }
