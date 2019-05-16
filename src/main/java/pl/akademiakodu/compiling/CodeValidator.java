@@ -18,11 +18,13 @@ public class CodeValidator {
     private CompilerExecutor compilerExecutor;
 
 
-
     public String getResult(Path path, String expectedResult) {
         try {
-            Path compiledFilePath = compilerExecutor.compileSource(path);
-            Path output = compilerExecutor.runClass(compiledFilePath);
+            Path output = null;
+            synchronized (this) {
+                Path compiledFilePath = compilerExecutor.compileSource(path);
+                output = compilerExecutor.runClass(compiledFilePath);
+            }
             StringBuilder stringResult = new StringBuilder();
             Stream<String> stream = Files.lines(output);
             stream.forEach(s -> stringResult.append(s));
