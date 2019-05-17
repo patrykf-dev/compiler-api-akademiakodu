@@ -27,23 +27,30 @@ public class SimpleCompilerExecutor implements CompilerExecutor {
         return Paths.get(path);
     }
 
+    /**
+     * This method needs to create another process, beacues it's the only way to create new JVM. Using the current
+     * JVM and its System.out leads to Spring logging into the ouput file, which of course is not intended.
+     * @param javaClass path to java class to execute
+     * @return path to the output file
+     */
     public Path runClass(Path javaClass) throws Exception {
-        URL classUrl = javaClass.getParent().toFile().toURI().toURL();
-        URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{classUrl});
-        Class<?> clazz = Class.forName("Hello", true, classLoader);
-        clazz.getConstructor().newInstance();
-        Method method = clazz.getMethod("main", String[].class);
         try {
+
             String outputPath = fileStorageService.getOutputPathForFile();
-            PrintStream fileStream = new PrintStream(outputPath);
-            System.setOut(fileStream);
-            String[] params = null;
-            method.invoke(null, (Object) params);
+            System.out.println("javaClass NAME IS " + javaClass.toString());
+
+            String mainClassFolderPath = "D:\\Development\\compiler-api-akademiakodu-results\\";
+            String mainClassName = "Hello";
+
+            String cmd[] = {"java", "-cp", mainClassFolderPath, mainClassName};
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            File outputFile = new File(outputPath);
+            pb.redirectOutput(outputFile);
+            Process p = pb.start();
+            p.waitFor();
             return Paths.get(outputPath);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            System.setOut(null);
         }
         return null;
     }
