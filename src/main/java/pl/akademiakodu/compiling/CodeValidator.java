@@ -2,7 +2,7 @@ package pl.akademiakodu.compiling;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pl.akademiakodu.compiling.impl.SimpleCompilerExecutor;
+import pl.akademiakodu.JavaProject;
 import pl.akademiakodu.services.FileStorageService;
 
 import java.nio.file.Files;
@@ -18,13 +18,16 @@ public class CodeValidator {
     private CompilerExecutor compilerExecutor;
 
 
-    public String getResult(Path path, String expectedResult) {
+    public String getResult(JavaProject javaProject, String expectedResult) {
         try {
-            Path output = null;
+            Path mainCompiledClassPath = null;
+
             synchronized (this) {
-                Path compiledFilePath = compilerExecutor.compileSource(path);
-                output = compilerExecutor.runClass(compiledFilePath);
+                mainCompiledClassPath = compilerExecutor.compileProject(javaProject);
             }
+
+            Path output = compilerExecutor.runProject(javaProject);
+
             StringBuilder stringResult = new StringBuilder();
             Stream<String> stream = Files.lines(output);
             stream.forEach(s -> stringResult.append(s));

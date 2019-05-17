@@ -3,6 +3,7 @@ package pl.akademiakodu.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import pl.akademiakodu.JavaProject;
 import pl.akademiakodu.compiling.CodeValidator;
 
 import java.nio.charset.StandardCharsets;
@@ -17,8 +18,8 @@ public class CompilerApiService {
     public CompilerApiService() { }
 
     @Async
-    public String validateFile(Path path) {
-        return codeValidator.getResult(path, "Hello world");
+    public String validateProject(JavaProject javaProject) {
+        return codeValidator.getResult(javaProject, "Hello world");
     }
 
 }
