@@ -3,23 +3,21 @@ package pl.akademiakodu.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import pl.akademiakodu.JavaProject;
-import pl.akademiakodu.compiling.CodeValidator;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
+import pl.akademiakodu.compiling.ProjectValidationResult;
+import pl.akademiakodu.models.JavaProject;
+import pl.akademiakodu.compiling.ProjectValidator;
 
 @Service
 public class CompilerApiService {
 
     @Autowired
-    private CodeValidator codeValidator;
+    private ProjectValidator projectValidator;
 
     public CompilerApiService() { }
 
     @Async
-    public String validateProject(JavaProject javaProject) {
-        return codeValidator.getResult(javaProject, "Hello world");
+    public ProjectValidationResult validateProject(JavaProject javaProject) {
+        return projectValidator.validateProject(javaProject, "Hello world");
     }
 
 }

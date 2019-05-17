@@ -1,4 +1,4 @@
-package pl.akademiakodu;
+package pl.akademiakodu.models;
 
 import lombok.Getter;
 import lombok.ToString;
