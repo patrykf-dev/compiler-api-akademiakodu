@@ -28,8 +28,8 @@ public class SimpleCompilerExecutor implements CompilerExecutor {
     }
 
     /**
-     * This method needs to create another process, beacues it's the only way to create new JVM. Using the current
-     * JVM and its System.out leads to Spring logging into the ouput file, which of course is not intended.
+     * This method needs to create another process, because it's the only way to create new JVM. Using the current
+     * JVM and its System.out leads to Spring logging into the output file, which of course is not intended.
      * @param javaClass path to java class to execute
      * @return path to the output file
      */
@@ -37,15 +37,16 @@ public class SimpleCompilerExecutor implements CompilerExecutor {
         try {
 
             String outputPath = fileStorageService.getOutputPathForFile();
-            System.out.println("javaClass NAME IS " + javaClass.toString());
-
+            String errorPath = fileStorageService.getErrorPathForFile();
             String mainClassFolderPath = "D:\\Development\\compiler-api-akademiakodu-results\\";
             String mainClassName = "Hello";
 
             String cmd[] = {"java", "-cp", mainClassFolderPath, mainClassName};
             ProcessBuilder pb = new ProcessBuilder(cmd);
             File outputFile = new File(outputPath);
+            File errorFile = new File(errorPath);
             pb.redirectOutput(outputFile);
+            pb.redirectError(errorFile);
             Process p = pb.start();
             p.waitFor();
             return Paths.get(outputPath);
