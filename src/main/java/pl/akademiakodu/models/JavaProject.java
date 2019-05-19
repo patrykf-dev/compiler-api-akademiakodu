@@ -12,13 +12,17 @@ import java.util.Optional;
 @Getter
 @ToString
 public class JavaProject {
+    private int id;
     private String sourcePath;
+    private String classPath;
     private String mainClassPath;
     private String mainClassFullName;
     private static final String MAIN_CLASS_FILE = "Hello.java";
 
-    public JavaProject(String sourcePath) {
+    public JavaProject(String sourcePath, String classPath, int id) {
+        this.id = id;
         this.sourcePath = sourcePath;
+        this.classPath = classPath;
         this.mainClassPath = findMainClassPath(sourcePath);
         this.mainClassFullName = extractMainClassName();
     }
@@ -48,5 +52,13 @@ public class JavaProject {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static String formatId(int idToFormat) {
+        return String.format("%05d", idToFormat);
+    }
+
+    public String getFormattedId() {
+        return formatId(this.id);
     }
 }

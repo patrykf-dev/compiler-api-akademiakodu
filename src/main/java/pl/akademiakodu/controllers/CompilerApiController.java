@@ -22,6 +22,7 @@ public class CompilerApiController {
     @Autowired
     private FileStorageService fileStorageService;
 
+    private static int UPLOAD_ID = 1;
 
     @CrossOrigin
     @PostMapping("/code/upload")
@@ -29,26 +30,18 @@ public class CompilerApiController {
         ResponseEntity<String> response = verifyRequestBody(files);
         if (response != null) return response;
 
-        // TODO: fix it, should pass the highest dir
-        Path uploadedFile = saveUploadedFiles(files);
-        JavaProject javaProject = new JavaProject(uploadedFile.getParent().getParent().getParent().toString());
+
+        JavaProject javaProject = null;
+        try {
+            javaProject = fileStorageService.saveProject(UPLOAD_ID++, files);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Cannot upload files!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         // @Async method
         compilerApiService.validateProject(javaProject);
         return new ResponseEntity<>("Successfully uploaded file!", HttpStatus.OK);
-    }
-
-
-    private Path saveUploadedFiles(MultipartFile[] files) {
-        Path path = null;
-        try {
-            for (MultipartFile file : files) {
-                path = fileStorageService.saveUploadedFile(file.getBytes(), file.getOriginalFilename());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return path;
     }
 
     private ResponseEntity<String> verifyRequestBody(MultipartFile[] files) {

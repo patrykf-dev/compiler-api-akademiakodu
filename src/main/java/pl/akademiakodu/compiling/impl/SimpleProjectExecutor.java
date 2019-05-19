@@ -9,7 +9,6 @@ import pl.akademiakodu.services.FileStorageService;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @Component
 public class SimpleProjectExecutor implements ProjectExecutor {
@@ -21,10 +20,10 @@ public class SimpleProjectExecutor implements ProjectExecutor {
      * JVM and its System.out leads to Spring logging into the output file, which of course is not intended.
      */
     public Path runProject(JavaProject javaProject) throws IOException, InterruptedException {
-        File outputFile = fileStorageService.createOutputFile();
-        File errorFile = fileStorageService.createErrorFile();
+        File outputFile = fileStorageService.createOutputFile(javaProject);
+        File errorFile = fileStorageService.createErrorFile(javaProject);
 
-        String args[] = {"java", "-classpath", javaProject.getSourcePath(), javaProject.getMainClassFullName()};
+        String args[] = {"java", "-classpath", javaProject.getClassPath(), javaProject.getMainClassFullName()};
         ProcessBuilder processBuilder = new ProcessBuilder(args);
         processBuilder.redirectOutput(outputFile);
         processBuilder.redirectError(errorFile);
