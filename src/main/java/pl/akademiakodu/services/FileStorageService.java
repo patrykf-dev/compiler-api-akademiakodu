@@ -2,7 +2,7 @@ package pl.akademiakodu.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import pl.akademiakodu.models.JavaProject;
+import pl.akademiakodu.compiling.JavaProject;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -14,25 +14,10 @@ public class FileStorageService {
             Paths.get("D:", "Development", "compiler-api-akademiakodu-results").toString();
 
 
-    public File createOutputFile(JavaProject javaProject) throws IOException {
-        String path = Paths.get(javaProject.getClassPath(), "result-out.txt").toString();
-        File file = new File(path);
-        file.getParentFile().mkdir();
-        file.createNewFile();
-        return file;
-    }
-
-    public File createErrorFile(JavaProject javaProject) throws IOException {
-        String path = Paths.get(javaProject.getClassPath(), "result-err.txt").toString();
-        File file = new File(path);
-        file.getParentFile().mkdir();
-        file.createNewFile();
-        return file;
-    }
-
     public JavaProject saveProject(int uploadId, MultipartFile[] files) throws IOException {
-        String sourcePath = Paths.get(STORAGE, "uploads", JavaProject.formatId(uploadId) + "-source").toString();
-        String classPath = Paths.get(STORAGE, "output", JavaProject.formatId(uploadId) + "-compilation").toString();
+        String uploadPath = Paths.get(STORAGE, "project-" + formatId(uploadId)).toString();
+        String sourcePath = Paths.get(uploadPath, "source").toString();
+        String classPath = Paths.get(uploadPath, "validation", "classpath").toString();
         File sourceDirectory = new File(sourcePath);
         sourceDirectory.mkdirs();
 
@@ -42,6 +27,12 @@ public class FileStorageService {
 
         return new JavaProject(sourcePath, classPath, uploadId);
     }
+
+
+    private String formatId(int idToFormat) {
+        return String.format("%05d", idToFormat);
+    }
+
 
     private void saveSourceFile(MultipartFile file, String sourcePath) throws IOException {
         String[] childDirectories = extractChildDirectories(file);
@@ -69,5 +60,36 @@ public class FileStorageService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private File createLogFile(String classPath, String fileName) {
+        String classParent = new File(classPath).getParent();
+        String path = Paths.get(classParent, "logs", fileName).toString();
+        File file = new File(path);
+        file.getParentFile().mkdirs();
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+
+    public File createCompilationOutputFile(JavaProject javaProject) {
+        return createLogFile(javaProject.getClassPath(), "compilation-out.txt");
+    }
+
+    public File createCompilationErrorFile(JavaProject javaProject) {
+        return createLogFile(javaProject.getClassPath(), "compilation-err.txt");
+    }
+
+
+    public File createExecutionOutputFile(JavaProject javaProject) {
+        return createLogFile(javaProject.getClassPath(), "execution-out.txt");
+    }
+
+    public File createExecutionErrorFile(JavaProject javaProject) {
+        return createLogFile(javaProject.getClassPath(), "execution-err.txt");
     }
 }

@@ -1,4 +1,4 @@
-package pl.akademiakodu.models;
+package pl.akademiakodu.compiling;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -52,13 +52,5 @@ public class JavaProject {
             e.printStackTrace();
         }
         return "";
-    }
-
-    public static String formatId(int idToFormat) {
-        return String.format("%05d", idToFormat);
-    }
-
-    public String getFormattedId() {
-        return formatId(this.id);
     }
 }

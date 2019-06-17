@@ -2,8 +2,6 @@ package pl.akademiakodu.compiling;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pl.akademiakodu.models.JavaProject;
-import pl.akademiakodu.services.FileStorageService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,7 +27,8 @@ public class ProjectValidator {
 
         Path output;
         try {
-            output = executor.runProject(javaProject);
+            ProcessExecutionResults results = executor.runProject(javaProject);
+            output = results.getOutputFile();
         } catch (Exception e) {
             e.printStackTrace();
             return ProjectValidationResult.EXECUTION_ERROR;

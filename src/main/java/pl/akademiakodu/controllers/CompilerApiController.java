@@ -5,12 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pl.akademiakodu.models.JavaProject;
+import pl.akademiakodu.compiling.JavaProject;
 import pl.akademiakodu.services.CompilerApiService;
 import pl.akademiakodu.services.FileStorageService;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 @CrossOrigin
 @RestController
