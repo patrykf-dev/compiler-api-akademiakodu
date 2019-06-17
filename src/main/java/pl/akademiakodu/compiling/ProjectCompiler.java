@@ -4,5 +4,5 @@ import java.io.IOException;
 
 
 public interface ProjectCompiler {
-    ProcessExecutionResults compileProject(JavaProject javaProject) throws IOException, InterruptedException;
+    ProcessExecutionResults compileProject(ProjectDetails projectDetails) throws IOException, InterruptedException;
 }

@@ -5,11 +5,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pl.akademiakodu.compiling.JavaProject;
+import pl.akademiakodu.compiling.ProjectDetails;
+import pl.akademiakodu.models.UploadedProject;
+import pl.akademiakodu.repositories.UploadedProjectRepository;
 import pl.akademiakodu.services.CompilerApiService;
 import pl.akademiakodu.services.FileStorageService;
 
 import java.io.IOException;
+import java.sql.Date;
 
 @CrossOrigin
 @RestController
@@ -21,7 +24,8 @@ public class CompilerApiController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    private static int UPLOAD_ID = 1;
+    @Autowired
+    private UploadedProjectRepository uploadedProjectRepository;
 
     @CrossOrigin
     @PostMapping("/code/upload")
@@ -30,16 +34,19 @@ public class CompilerApiController {
         if (response != null) return response;
 
 
-        JavaProject javaProject = null;
+        UploadedProject uploadedProject = new UploadedProject();
+        uploadedProject.setUploadDate(new Date(System.currentTimeMillis()));
+        uploadedProjectRepository.save(uploadedProject);
+
         try {
-            javaProject = fileStorageService.saveProject(UPLOAD_ID++, files);
+            ProjectDetails projectDetails = fileStorageService.saveProject(uploadedProject.getId(), files);
+            uploadedProject.setProjectDetails(projectDetails);
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity<>("Cannot upload files!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        // @Async method
-        compilerApiService.validateProject(javaProject);
+        compilerApiService.validateProject(uploadedProject); //runs in background
         return new ResponseEntity<>("Successfully uploaded file!", HttpStatus.OK);
     }
 

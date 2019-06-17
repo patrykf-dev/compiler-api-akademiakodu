@@ -2,7 +2,7 @@ package pl.akademiakodu.compiling.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pl.akademiakodu.compiling.JavaProject;
+import pl.akademiakodu.compiling.ProjectDetails;
 import pl.akademiakodu.compiling.ProcessExecutionResults;
 import pl.akademiakodu.compiling.ProcessRunner;
 import pl.akademiakodu.compiling.ProjectExecutor;
@@ -22,11 +22,11 @@ public class SimpleProjectExecutor implements ProjectExecutor {
     private ProcessRunner processRunner;
 
 
-    public ProcessExecutionResults runProject(JavaProject javaProject) throws IOException, InterruptedException {
-        File outputFile = fileStorageService.createExecutionOutputFile(javaProject);
-        File errorFile = fileStorageService.createExecutionErrorFile(javaProject);
+    public ProcessExecutionResults runProject(ProjectDetails projectDetails) throws IOException, InterruptedException {
+        File outputFile = fileStorageService.createExecutionOutputFile(projectDetails);
+        File errorFile = fileStorageService.createExecutionErrorFile(projectDetails);
 
-        String args[] = {"java", "-classpath", javaProject.getClassPath(), javaProject.getMainClassFullName()};
+        String args[] = {"java", "-classpath", projectDetails.getClassPath(), projectDetails.getMainClassFullName()};
         processRunner.runProcess(args, outputFile, errorFile);
 
         Path out = Paths.get(outputFile.getAbsolutePath());

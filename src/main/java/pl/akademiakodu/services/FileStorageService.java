@@ -2,7 +2,7 @@ package pl.akademiakodu.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import pl.akademiakodu.compiling.JavaProject;
+import pl.akademiakodu.compiling.ProjectDetails;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -14,7 +14,7 @@ public class FileStorageService {
             Paths.get("D:", "Development", "compiler-api-akademiakodu-results").toString();
 
 
-    public JavaProject saveProject(int uploadId, MultipartFile[] files) throws IOException {
+    public ProjectDetails saveProject(long uploadId, MultipartFile[] files) throws IOException {
         String uploadPath = Paths.get(STORAGE, "project-" + formatId(uploadId)).toString();
         String sourcePath = Paths.get(uploadPath, "source").toString();
         String classPath = Paths.get(uploadPath, "validation", "classpath").toString();
@@ -25,11 +25,11 @@ public class FileStorageService {
             saveSourceFile(file, sourcePath);
         }
 
-        return new JavaProject(sourcePath, classPath, uploadId);
+        return new ProjectDetails(sourcePath, classPath, uploadId);
     }
 
 
-    private String formatId(int idToFormat) {
+    private String formatId(long idToFormat) {
         return String.format("%05d", idToFormat);
     }
 
@@ -76,20 +76,20 @@ public class FileStorageService {
     }
 
 
-    public File createCompilationOutputFile(JavaProject javaProject) {
-        return createLogFile(javaProject.getClassPath(), "compilation-out.txt");
+    public File createCompilationOutputFile(ProjectDetails projectDetails) {
+        return createLogFile(projectDetails.getClassPath(), "compilation-out.txt");
     }
 
-    public File createCompilationErrorFile(JavaProject javaProject) {
-        return createLogFile(javaProject.getClassPath(), "compilation-err.txt");
+    public File createCompilationErrorFile(ProjectDetails projectDetails) {
+        return createLogFile(projectDetails.getClassPath(), "compilation-err.txt");
     }
 
 
-    public File createExecutionOutputFile(JavaProject javaProject) {
-        return createLogFile(javaProject.getClassPath(), "execution-out.txt");
+    public File createExecutionOutputFile(ProjectDetails projectDetails) {
+        return createLogFile(projectDetails.getClassPath(), "execution-out.txt");
     }
 
-    public File createExecutionErrorFile(JavaProject javaProject) {
-        return createLogFile(javaProject.getClassPath(), "execution-err.txt");
+    public File createExecutionErrorFile(ProjectDetails projectDetails) {
+        return createLogFile(projectDetails.getClassPath(), "execution-err.txt");
     }
 }

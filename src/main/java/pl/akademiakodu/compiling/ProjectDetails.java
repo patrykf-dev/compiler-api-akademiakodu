@@ -1,7 +1,9 @@
 package pl.akademiakodu.compiling;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+import pl.akademiakodu.models.UploadedProject;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -10,16 +12,18 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 @Getter
+@Setter
 @ToString
-public class JavaProject {
-    private int id;
+public class ProjectDetails {
+    private long id;
     private String sourcePath;
     private String classPath;
     private String mainClassPath;
     private String mainClassFullName;
+
     private static final String MAIN_CLASS_FILE = "Hello.java";
 
-    public JavaProject(String sourcePath, String classPath, int id) {
+    public ProjectDetails(String sourcePath, String classPath, long id) {
         this.id = id;
         this.sourcePath = sourcePath;
         this.classPath = classPath;
