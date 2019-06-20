@@ -31,8 +31,6 @@ public class ProjectValidator {
     private boolean outputsEqual(String userOutput, String expectedOutput) {
         String userConverted = userOutput.trim();
         String expectedConverted = expectedOutput.trim();
-        System.out.println(userConverted);
-        System.out.println(expectedConverted);
         return userConverted.equalsIgnoreCase(expectedConverted);
     }
 
