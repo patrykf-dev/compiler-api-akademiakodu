@@ -3,8 +3,8 @@ package pl.akademiakodu.compiling.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.akademiakodu.compiling.ProjectDetails;
-import pl.akademiakodu.compiling.ProcessExecutionResults;
-import pl.akademiakodu.compiling.ProcessRunner;
+import pl.akademiakodu.compiling.process.ProcessExecutionResults;
+import pl.akademiakodu.compiling.process.ProcessRunner;
 import pl.akademiakodu.compiling.ProjectExecutor;
 import pl.akademiakodu.services.FileStorageService;
 

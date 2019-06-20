@@ -2,13 +2,8 @@ package pl.akademiakodu.compiling;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import pl.akademiakodu.compiling.process.ProcessExecutionResults;
 import pl.akademiakodu.models.UploadedProject;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
 
 @Component
 public class ProjectValidator {
