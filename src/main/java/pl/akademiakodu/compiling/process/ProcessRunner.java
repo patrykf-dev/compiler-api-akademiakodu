@@ -1,4 +1,4 @@
-package pl.akademiakodu.compiling;
+package pl.akademiakodu.compiling.process;
 
 import org.springframework.stereotype.Service;
 
