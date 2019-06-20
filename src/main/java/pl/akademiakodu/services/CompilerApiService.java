@@ -33,10 +33,11 @@ public class CompilerApiService {
         try {
             validationResult = projectValidator.runProject(uploadedProject);
 
-            userOutput = fileStorageService.getUserOutput(uploadedProject);
-            expectedOutput = fileStorageService.getExpectedOutput(uploadedProject);
-
-            validationResult = projectValidator.verifyOutput(userOutput, expectedOutput);
+            if(validationResult == null) {
+                userOutput = fileStorageService.getUserOutput(uploadedProject);
+                expectedOutput = fileStorageService.getExpectedOutput(uploadedProject);
+                validationResult = projectValidator.verifyOutput(userOutput, expectedOutput);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             validationResult = ProjectValidationResult.SERVER_ERROR;
