@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.akademiakodu.compiling.ProjectDetails;
 import pl.akademiakodu.models.UploadedProject;
+import pl.akademiakodu.repositories.TaskRepository;
 import pl.akademiakodu.repositories.UploadedProjectRepository;
+import pl.akademiakodu.repositories.UserRepository;
 import pl.akademiakodu.services.CompilerApiService;
 import pl.akademiakodu.services.FileStorageService;
 
@@ -16,7 +18,7 @@ import java.sql.Date;
 
 @CrossOrigin
 @RestController
-public class CompilerApiController {
+public class UploadedProjectsController {
 
     @Autowired
     private CompilerApiService compilerApiService;
@@ -27,20 +29,26 @@ public class CompilerApiController {
     @Autowired
     private UploadedProjectRepository uploadedProjectRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TaskRepository taskRepository;
+
     @CrossOrigin
-    @PostMapping("/code/upload")
-    public ResponseEntity<String> uploadProject(@RequestBody MultipartFile[] files) {
+    @PostMapping("/projects/upload")
+    public ResponseEntity<String> uploadProject(@RequestBody MultipartFile[] files, @RequestParam int userId, @RequestParam int taskId) {
         ResponseEntity<String> response = verifyRequestBody(files);
         if (response != null) return response;
 
 
-        UploadedProject uploadedProject = new UploadedProject();
-        uploadedProject.setUploadDate(new Date(System.currentTimeMillis()));
+        UploadedProject uploadedProject = createProject(userId, taskId);
         uploadedProjectRepository.save(uploadedProject);
 
         try {
             ProjectDetails projectDetails = fileStorageService.saveProject(uploadedProject.getId(), files);
             uploadedProject.setProjectDetails(projectDetails);
+            uploadedProject.setSourcePath(projectDetails.getSourcePath());
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity<>("Cannot upload files!", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -48,6 +56,16 @@ public class CompilerApiController {
 
         compilerApiService.validateProject(uploadedProject); //runs in background
         return new ResponseEntity<>("Successfully uploaded file!", HttpStatus.OK);
+    }
+
+    private UploadedProject createProject(int userId, int taskId) {
+        UploadedProject uploadedProject = new UploadedProject();
+        if (userRepository.findById(userId).isPresent())
+            uploadedProject.setUser(userRepository.findById(userId).get());
+        if (taskRepository.findById(taskId).isPresent())
+            uploadedProject.setTask(taskRepository.findById(taskId).get());
+        uploadedProject.setUploadDate(new Date(System.currentTimeMillis()));
+        return uploadedProject;
     }
 
     private ResponseEntity<String> verifyRequestBody(MultipartFile[] files) {
