@@ -43,13 +43,13 @@ public class UploadedProjectsController {
 
     @CrossOrigin
     @PostMapping("/projects/upload")
-    public ResponseEntity<String> uploadProject(@RequestBody MultipartFile[] files, @RequestParam int userId, @RequestParam int taskId) {
+    public ResponseEntity<String> uploadProjectPost(@RequestBody MultipartFile[] files, @RequestParam("userId") int userId, @RequestParam("taskId") int taskId) {
         ResponseEntity<String> response = verifyRequestBody(files);
         if (response != null) return response;
 
 
         UploadedProject uploadedProject = createProject(userId, taskId);
-        if(uploadedProject == null) {
+        if (uploadedProject == null) {
             return new ResponseEntity<>("Invalid user or task!", HttpStatus.BAD_REQUEST);
         }
         uploadedProjectRepository.save(uploadedProject);
@@ -74,18 +74,24 @@ public class UploadedProjectsController {
         return "projects-list";
     }
 
+    @CrossOrigin
+    @RequestMapping("/projects/upload")
+    public String uploadProject() {
+        return "projects-upload";
+    }
+
     private UploadedProject createProject(int userId, int taskId) {
         UploadedProject uploadedProject = new UploadedProject();
 
         Optional<User> u = userRepository.findById(userId);
-        if(u.isPresent()) {
+        if (u.isPresent()) {
             uploadedProject.setUser(u.get());
         } else {
             return null;
         }
 
         Optional<Task> t = taskRepository.findById(taskId);
-        if(t.isPresent()) {
+        if (t.isPresent()) {
             uploadedProject.setTask(t.get());
         } else {
             return null;

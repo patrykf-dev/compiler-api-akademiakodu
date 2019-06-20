@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects upload</title>
+</head>
+<body>
+<h1>Upload java project</h1>
+<form method="POST" enctype="multipart/form-data" th:action="@{/projects/upload}">
+    <input type="file" name="files" multiple>
+    <br/><br/>
+    <p>User ID: </p>
+    <input type="number" name="userId"/>
+    <br/><br/>
+    <p>Task ID: </p>
+    <input type="number" name="taskId"/>
+    <br/><br/>
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>
