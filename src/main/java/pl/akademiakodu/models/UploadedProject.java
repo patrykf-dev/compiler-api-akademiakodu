@@ -15,7 +15,7 @@ import java.sql.Date;
 public class UploadedProject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private int id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -8,7 +8,7 @@ import java.sql.Date;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private int id;
     private String name;
     private String expectedResultPath;
     private Date updateDate;

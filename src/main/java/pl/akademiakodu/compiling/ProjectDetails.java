@@ -15,7 +15,6 @@ import java.util.Optional;
 @Setter
 @ToString
 public class ProjectDetails {
-    private long id;
     private String sourcePath;
     private String classPath;
     private String mainClassPath;
@@ -23,8 +22,7 @@ public class ProjectDetails {
 
     private static final String MAIN_CLASS_FILE = "Hello.java";
 
-    public ProjectDetails(String sourcePath, String classPath, long id) {
-        this.id = id;
+    public ProjectDetails(String sourcePath, String classPath) {
         this.sourcePath = sourcePath;
         this.classPath = classPath;
         this.mainClassPath = findMainClassPath(sourcePath);

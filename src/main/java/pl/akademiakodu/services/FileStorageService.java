@@ -25,7 +25,7 @@ public class FileStorageService {
             saveSourceFile(file, sourcePath);
         }
 
-        return new ProjectDetails(sourcePath, classPath, uploadId);
+        return new ProjectDetails(sourcePath, classPath);
     }
 
 
