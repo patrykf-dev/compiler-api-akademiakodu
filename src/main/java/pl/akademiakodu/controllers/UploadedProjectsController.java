@@ -6,7 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.akademiakodu.compiling.ProjectDetails;
+import pl.akademiakodu.compiling.ProjectValidationResult;
+import pl.akademiakodu.models.Task;
 import pl.akademiakodu.models.UploadedProject;
+import pl.akademiakodu.models.User;
 import pl.akademiakodu.repositories.TaskRepository;
 import pl.akademiakodu.repositories.UploadedProjectRepository;
 import pl.akademiakodu.repositories.UserRepository;
@@ -15,6 +18,7 @@ import pl.akademiakodu.services.FileStorageService;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -43,6 +47,9 @@ public class UploadedProjectsController {
 
 
         UploadedProject uploadedProject = createProject(userId, taskId);
+        if(uploadedProject == null) {
+            return new ResponseEntity<>("Invalid user or task!", HttpStatus.BAD_REQUEST);
+        }
         uploadedProjectRepository.save(uploadedProject);
 
         try {
@@ -51,19 +58,32 @@ public class UploadedProjectsController {
             uploadedProject.setSourcePath(projectDetails.getSourcePath());
         } catch (IOException e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Cannot upload files!", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Cannot upload files!", HttpStatus.BAD_REQUEST);
         }
 
         compilerApiService.validateProject(uploadedProject); //runs in background
-        return new ResponseEntity<>("Successfully uploaded file!", HttpStatus.OK);
+        return new ResponseEntity<>("Successfully uploaded project!", HttpStatus.OK);
     }
 
     private UploadedProject createProject(int userId, int taskId) {
         UploadedProject uploadedProject = new UploadedProject();
-        if (userRepository.findById(userId).isPresent())
-            uploadedProject.setUser(userRepository.findById(userId).get());
-        if (taskRepository.findById(taskId).isPresent())
-            uploadedProject.setTask(taskRepository.findById(taskId).get());
+
+        Optional<User> u = userRepository.findById(userId);
+        if(u.isPresent()) {
+            uploadedProject.setUser(u.get());
+        } else {
+            return null;
+        }
+
+        Optional<Task> t = taskRepository.findById(taskId);
+        if(t.isPresent()) {
+            uploadedProject.setTask(t.get());
+        } else {
+            return null;
+        }
+
+        uploadedProject.setValidationResult(ProjectValidationResult.UPLOADED);
+
         uploadedProject.setUploadDate(new Date(System.currentTimeMillis()));
         return uploadedProject;
     }

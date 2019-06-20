@@ -19,29 +19,24 @@ public class ProjectValidator {
     private ProjectExecutor executor;
 
 
-    public ProjectValidationResult validateProject(UploadedProject uploadedProject, String expectedResult) {
+    public ProjectValidationResult runProject(UploadedProject uploadedProject) {
         if (!compileProject(uploadedProject)) return ProjectValidationResult.COMPILATION_ERROR;
         if (!executeProject(uploadedProject)) return ProjectValidationResult.EXECUTION_ERROR;
-
-        Path output = Paths.get(uploadedProject.getExecutionOutPath());
-
-        return verifyOutput(expectedResult, output);
+        return null;
     }
 
-    private ProjectValidationResult verifyOutput(String expectedResult, Path output) {
-        StringBuilder compilationOutput = new StringBuilder();
-        try {
-            Stream<String> stream = Files.lines(output);
-            stream.forEach(s -> compilationOutput.append(s));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (compilationOutput.toString().equals(expectedResult)) {
+    public ProjectValidationResult verifyOutput(String userOutput, String expectedOutput) {
+        if (outputsEqual(userOutput, expectedOutput)) {
             return ProjectValidationResult.VALID_RESULT;
         } else {
             return ProjectValidationResult.INVALID_RESULT;
         }
+    }
+
+    private boolean outputsEqual(String userOutput, String expectedOutput) {
+        String userConverted = userOutput.trim().toLowerCase();
+        String expectedConverted = expectedOutput.trim().toLowerCase();
+        return userConverted.equals(expectedConverted);
     }
 
     private boolean compileProject(UploadedProject uploadedProject) {

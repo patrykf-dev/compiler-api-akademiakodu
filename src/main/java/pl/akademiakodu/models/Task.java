@@ -1,8 +1,11 @@
 package pl.akademiakodu.models;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.sql.Date;
 
+@Getter
 @Entity
 @Table(name = "tasks")
 public class Task {

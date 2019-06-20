@@ -3,19 +3,25 @@ package pl.akademiakodu.services;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.akademiakodu.compiling.ProjectDetails;
+import pl.akademiakodu.models.UploadedProject;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 @Service
 public class FileStorageService {
 
-    private static final String STORAGE =
+    private static final String RESULTS_STORAGE =
             Paths.get("D:", "Development", "compiler-api-akademiakodu-results").toString();
+    private static final String TASKS_STORAGE =
+            Paths.get("D:", "Development", "compiler-api-akademiakodu-tasks").toString();
 
 
     public ProjectDetails saveProject(long uploadId, MultipartFile[] files) throws IOException {
-        String uploadPath = Paths.get(STORAGE, "project-" + formatId(uploadId)).toString();
+        String uploadPath = Paths.get(RESULTS_STORAGE, "project-" + formatId(uploadId)).toString();
         String sourcePath = Paths.get(uploadPath, "source").toString();
         String classPath = Paths.get(uploadPath, "validation", "classpath").toString();
         File sourceDirectory = new File(sourcePath);
@@ -28,6 +34,30 @@ public class FileStorageService {
         return new ProjectDetails(sourcePath, classPath);
     }
 
+
+    public String getExpectedOutput(UploadedProject uploadedProject) throws IOException {
+        int taskId = uploadedProject.getTask().getId();
+        Path taskPath = getTaskPath(taskId);
+        return loadTextFileContent(taskPath);
+    }
+
+    public String getUserOutput(UploadedProject uploadedProject) throws IOException {
+        Path executionOutput = Paths.get(uploadedProject.getExecutionOutPath());
+        return loadTextFileContent(executionOutput);
+    }
+
+    private String loadTextFileContent(Path filePath) throws IOException {
+        StringBuilder fileContent = new StringBuilder();
+        Stream<String> stream = Files.lines(filePath);
+        stream.forEach(s -> fileContent.append(s));
+        return fileContent.toString();
+    }
+
+
+    private Path getTaskPath(int taskId) {
+        String fileName = "task-" + String.format("%03d", taskId) + ".txt";
+        return Paths.get(TASKS_STORAGE, fileName);
+    }
 
     private String formatId(long idToFormat) {
         return String.format("%05d", idToFormat);
@@ -61,6 +91,7 @@ public class FileStorageService {
         }
         return null;
     }
+
 
     private File createLogFile(String classPath, String fileName) {
         String classParent = new File(classPath).getParent();
