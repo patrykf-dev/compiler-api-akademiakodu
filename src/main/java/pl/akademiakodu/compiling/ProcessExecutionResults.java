@@ -1,4 +1,4 @@
-package pl.akademiakodu.compiling.process;
+package pl.akademiakodu.compiling;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
