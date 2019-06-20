@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Uploaded projects list</title>
+</head>
+<body>
+<div th:switch="${projects}">
+    <h2 th:case="null">No projects yet!</h2>
+    <div th:case="*">
+        <h2>Projects</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>User id</th>
+                <th>Task id</th>
+                <th>Validation result</th>
+                <th>Upload date</th>
+                <th>Source path</th>
+                <th>Compilation out path</th>
+                <th>Compilation error path</th>
+                <th>Execution out path</th>
+                <th>Execution error path</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="project : ${projects}">
+                <td th:text="${project.id}"></td>
+                <th:block th:switch="${project.user}">
+                    <td th:case="null">NONE</td>
+                    <td th:case="*" th:text="${project.user.id}"></td>
+                </th:block>
+                <th:block th:switch="${project.task}">
+                    <td th:case="null">NONE</td>
+                    <td th:case="*" th:text="${project.task.id}"></td>
+                </th:block>
+                <td th:text="${project.validationResult}"></td>
+                <td th:text="${project.uploadDate}"></td>
+                <td th:text="${project.sourcePath}"></td>
+                <td th:text="${project.compilationOutPath}"></td>
+                <td th:text="${project.compilationErrorPath}"></td>
+                <td th:text="${project.executionOutPath}"></td>
+                <td th:text="${project.executionErrorPath}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -3,6 +3,8 @@ package pl.akademiakodu.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.akademiakodu.compiling.ProjectDetails;
@@ -21,7 +23,7 @@ import java.sql.Date;
 import java.util.Optional;
 
 @CrossOrigin
-@RestController
+@Controller
 public class UploadedProjectsController {
 
     @Autowired
@@ -63,6 +65,13 @@ public class UploadedProjectsController {
 
         compilerApiService.validateProject(uploadedProject); //runs in background
         return new ResponseEntity<>("Successfully uploaded project!", HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @RequestMapping("/projects/list")
+    public String showAllProjects(Model model) {
+        model.addAttribute("projects", uploadedProjectRepository.findAll());
+        return "projects-list";
     }
 
     private UploadedProject createProject(int userId, int taskId) {

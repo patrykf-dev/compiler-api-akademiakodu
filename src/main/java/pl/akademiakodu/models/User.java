@@ -1,7 +1,10 @@
 package pl.akademiakodu.models;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
+@Getter
 @Entity
 @Table(name = "users")
 public class User {
