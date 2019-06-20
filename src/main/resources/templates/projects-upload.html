@@ -3,19 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Projects upload</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-<h1>Upload java project</h1>
 <form method="POST" enctype="multipart/form-data" th:action="@{/projects/upload}">
-    <input type="file" name="files" multiple>
-    <br/><br/>
-    <p>User ID: </p>
-    <input type="number" name="userId"/>
-    <br/><br/>
-    <p>Task ID: </p>
-    <input type="number" name="taskId"/>
-    <br/><br/>
-    <button type="submit">Submit</button>
+    <div class="container">
+        <h1>Upload java project</h1>
+        <div class="custom-file">
+            <input type="file" id="customFile" name="files" multiple>
+            <label class="custom-file-label" for="customFile">Choose files...</label>
+        </div>
+        <div class="form-group">
+            <label for="userIdentificator">User ID:</label>
+            <input type="number" name="userId" class="form-control" id="userIdentificator"/>
+        </div>
+        <div class="form-group">
+            <label for="taskIdentificator">Task ID:</label>
+            <input type="number" name="taskId" class="form-control" id="taskIdentificator"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
 </form>
 </body>
 </html>
